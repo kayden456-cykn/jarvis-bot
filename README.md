@@ -1,6 +1,6 @@
 # Jarvis Bot
 
-A standalone Discord bot powered by Discord.js, TypeScript, and the OpenAI Responses API.
+A standalone Discord bot powered by Discord.js, TypeScript, and the Google Gemini API.
 
 ## Features
 
@@ -16,9 +16,9 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the OpenAI Respo
 
 - Node.js 18 or newer
 - A Discord application and bot token
-- An OpenAI API key
+- A Gemini API key from Google AI Studio
 
-**Important:** OpenAI API usage is billed separately from a ChatGPT subscription. Check pricing and get permission from a parent or guardian before enabling paid API usage.
+The Gemini API has a free tier for supported models, but rate limits apply and can change. Review the [official pricing and free-tier details](https://ai.google.dev/gemini-api/docs/pricing) before using it. Do not enable paid billing unless you understand the costs and have permission from a parent or guardian.
 
 ## Setup on Windows
 
@@ -37,9 +37,10 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the OpenAI Respo
    copy .env.example .env
    notepad .env
    ```
-5. Fill in `DISCORD_BOT_TOKEN` and `OPENAI_API_KEY`. Keep these secrets private and never commit `.env`.
-6. In the Discord Developer Portal, open **Bot** and enable **Message Content Intent**. Invite the bot to your server with permissions to view and send messages.
-7. Build and run:
+5. Fill in `DISCORD_BOT_TOKEN` and `GEMINI_API_KEY`. Keep these secrets private and never commit `.env`.
+6. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
+7. In the Discord Developer Portal, open **Bot** and enable **Message Content Intent**. Invite the bot to your server with permissions to view and send messages.
+8. Build and run:
    ```bat
    npm run build
    npm start
@@ -51,8 +52,8 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the OpenAI Respo
 | --- | --- |
 | `DISCORD_BOT_TOKEN` | Discord bot token |
 | `DISCORD_CLIENT_ID` | Discord application ID, reserved for future slash-command support |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `OPENAI_MODEL` | Model name; defaults to `gpt-4.1-mini` |
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `GEMINI_MODEL` | Gemini model; defaults to `gemini-2.5-flash` |
 
 ## Notes
 
@@ -61,3 +62,5 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the OpenAI Respo
 - Conversation history and first-greeting state reset when the process restarts.
 - The bot only responds in servers, not DMs.
 - Keep the bot process running for it to stay online.
+- The free API tier has quotas; the bot may need to wait if a limit is reached.
+
