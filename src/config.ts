@@ -7,8 +7,8 @@ export const config = {
     token: process.env.DISCORD_BOT_TOKEN || '',
     clientId: process.env.DISCORD_CLIENT_ID || '',
   },
-  gemini: {
-    apiKey: process.env.GEMINI_API_KEY || '',
-    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  groq: {
+    apiKey: process.env.GROQ_API_KEY || '',
+    model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
   },
 };
