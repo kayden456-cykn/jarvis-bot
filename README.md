@@ -1,6 +1,6 @@
 # Jarvis Bot
 
-A standalone Discord bot powered by Discord.js, TypeScript, and a local [Ollama](https://ollama.com/) model. The AI runs on your own computer, so no hosted AI API key or per-message AI billing is required.
+A standalone Discord bot powered by Discord.js, TypeScript, and the Google Gemini API.
 
 ## Features
 
@@ -16,41 +16,35 @@ A standalone Discord bot powered by Discord.js, TypeScript, and a local [Ollama]
 
 - Node.js 18 or newer
 - A Discord application and bot token
-- Ollama installed on the same computer that runs the bot
-- Enough RAM and processing power to run the model
+- A Gemini API key from Google AI Studio
 
-Ollama runs the language model locally. There is no AI API usage bill, but you still need a computer, electricity, and an internet connection for Discord itself.
+The Gemini API offers a free tier for supported models, subject to quotas and availability. You should not need to enable paid billing to use the free tier, but check the current [official pricing and free-tier details](https://ai.google.dev/gemini-api/docs/pricing). Do not enable paid billing unless you understand the costs and have permission from a parent or guardian.
 
 ## Setup on Windows
 
 1. Install Node.js from https://nodejs.org.
-2. Install Ollama from https://ollama.com/download.
-3. Open Command Prompt or PowerShell and download the default model:
-   ```bat
-   ollama pull llama3.2:3b
-   ```
-4. Clone this repository:
+2. Clone this repository:
    ```bat
    git clone https://github.com/kayden456-cykn/jarvis-bot.git
    cd jarvis-bot
    ```
-5. Install dependencies:
+3. Install dependencies:
    ```bat
    npm install
    ```
-6. Create your local environment file:
+4. Create your local environment file:
    ```bat
    copy .env.example .env
    notepad .env
    ```
-7. Fill in `DISCORD_BOT_TOKEN`. You do not need a Gemini or OpenAI API key. Keep your Discord token private and never commit `.env`.
-8. Make sure Ollama is running. Its default local API address is `http://127.0.0.1:11434`.
-9. In the Discord Developer Portal, open **Bot** and enable **Message Content Intent**. Invite the bot to your server with permissions to view and send messages.
-10. Build and run:
-    ```bat
-    npm run build
-    npm start
-    ```
+5. Fill in `DISCORD_BOT_TOKEN` and `GEMINI_API_KEY`. Keep these secrets private and never commit `.env`.
+6. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
+7. In the Discord Developer Portal, open **Bot** and enable **Message Content Intent**. Invite the bot to your server with permissions to view and send messages.
+8. Build and run:
+   ```bat
+   npm run build
+   npm start
+   ```
 
 ## Environment variables
 
@@ -58,15 +52,14 @@ Ollama runs the language model locally. There is no AI API usage bill, but you s
 | --- | --- |
 | `DISCORD_BOT_TOKEN` | Discord bot token |
 | `DISCORD_CLIENT_ID` | Discord application ID, reserved for future slash-command support |
-| `OLLAMA_BASE_URL` | Local Ollama address; defaults to `http://127.0.0.1:11434` |
-| `OLLAMA_MODEL` | Local model; defaults to `llama3.2:3b` |
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `GEMINI_MODEL` | Gemini model; defaults to `gemini-2.5-flash` |
 
 ## Notes
 
 - The first time a user invokes Jarvis, it replies `what do u want🫩✌️🥀💔`.
-- Later messages containing Jarvis, or replies to a Jarvis message, are sent to the local AI model.
+- Later messages containing Jarvis, or replies to a Jarvis message, are sent to the AI.
 - Conversation history and first-greeting state reset when the process restarts.
 - The bot only responds in servers, not DMs.
-- Keep both the bot process and Ollama running for Jarvis AI replies to work.
-- The default model is a relatively small model; response quality and speed depend on your hardware. You can choose another model available in Ollama by changing `OLLAMA_MODEL`.
-
+- Keep the bot process running for it to stay online.
+- The free API tier has quotas; the bot may need to wait if a limit is reached.
