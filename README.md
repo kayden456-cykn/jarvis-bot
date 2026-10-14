@@ -1,6 +1,6 @@
 # Jarvis Bot
 
-A standalone Discord bot powered by Discord.js, TypeScript, and the Google Gemini API.
+A standalone Discord bot powered by Discord.js, TypeScript, and the Groq API.
 
 ## Features
 
@@ -16,29 +16,29 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the Google Gemin
 
 - Node.js 18 or newer
 - A Discord application and bot token
-- A Gemini API key from Google AI Studio
+- A GroqCloud API key
 
-The Gemini API offers a free tier for supported models, subject to quotas and availability. You should not need to enable paid billing to use the free tier, but check the current [official pricing and free-tier details](https://ai.google.dev/gemini-api/docs/pricing). Do not enable paid billing unless you understand the costs and have permission from a parent or guardian.
+Groq offers a free tier with rate limits. You can use the free tier without upgrading to the paid Developer tier; Groq says payment information is required when upgrading. Review the [official rate limits](https://console.groq.com/docs/rate-limits) and [billing FAQ](https://console.groq.com/docs/billing-faqs). Do not upgrade to a paid tier unless you understand the costs and have permission from a parent or guardian.
 
 ## Setup on Windows
 
 1. Install Node.js from https://nodejs.org.
-2. Clone this repository:
+2. Create a GroqCloud account and generate an API key at https://console.groq.com/keys.
+3. Clone this repository:
    ```bat
    git clone https://github.com/kayden456-cykn/jarvis-bot.git
    cd jarvis-bot
    ```
-3. Install dependencies:
+4. Install dependencies:
    ```bat
    npm install
    ```
-4. Create your local environment file:
+5. Create your local environment file:
    ```bat
    copy .env.example .env
    notepad .env
    ```
-5. Fill in `DISCORD_BOT_TOKEN` and `GEMINI_API_KEY`. Keep these secrets private and never commit `.env`.
-6. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
+6. Fill in `DISCORD_BOT_TOKEN` and `GROQ_API_KEY`. Keep these secrets private and never commit `.env`.
 7. In the Discord Developer Portal, open **Bot** and enable **Message Content Intent**. Invite the bot to your server with permissions to view and send messages.
 8. Build and run:
    ```bat
@@ -52,8 +52,8 @@ The Gemini API offers a free tier for supported models, subject to quotas and av
 | --- | --- |
 | `DISCORD_BOT_TOKEN` | Discord bot token |
 | `DISCORD_CLIENT_ID` | Discord application ID, reserved for future slash-command support |
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `GEMINI_MODEL` | Gemini model; defaults to `gemini-2.5-flash` |
+| `GROQ_API_KEY` | GroqCloud API key |
+| `GROQ_MODEL` | Model ID; defaults to `openai/gpt-oss-20b` |
 
 ## Notes
 
@@ -62,4 +62,4 @@ The Gemini API offers a free tier for supported models, subject to quotas and av
 - Conversation history and first-greeting state reset when the process restarts.
 - The bot only responds in servers, not DMs.
 - Keep the bot process running for it to stay online.
-- The free API tier has quotas; the bot may need to wait if a limit is reached.
+- The free tier has rate limits; responses may fail temporarily if you exceed them.
