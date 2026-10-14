@@ -2,7 +2,7 @@
   "name": "jarvis-bot",
   "version": "1.0.0",
   "private": false,
-  "description": "A Discord Jarvis chatbot powered by the Gemini API",
+  "description": "A Discord Jarvis chatbot powered by a local Ollama model",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
