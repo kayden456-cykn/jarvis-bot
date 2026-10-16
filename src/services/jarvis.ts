@@ -6,6 +6,8 @@ type ChatTurn = { role: 'user' | 'assistant'; content: string };
 const conversations = new Map<string, ChatTurn[]>();
 const greetedUsers = new Set<string>();
 const lastReplyAt = new Map<string, number>();
+const handledMessageIds = new Set<string>();
+const MAX_HANDLED_MESSAGE_IDS = 5000;
 
 const SYSTEM_PROMPT = `You are Jarvis, a Discord chatbot with a Gen Z / Gen Alpha internet style.
 Keep every reply short, blunt, casual, and usually one sentence or one short line.
@@ -69,6 +71,14 @@ async function askGroq(userId: string, prompt: string): Promise<string> {
 
 export async function handleJarvisMessage(message: Message): Promise<void> {
   if (message.author.bot || !message.guild) return;
+
+  // Discord events can be delivered more than once; process each message ID only once.
+  if (handledMessageIds.has(message.id)) return;
+  handledMessageIds.add(message.id);
+  if (handledMessageIds.size > MAX_HANDLED_MESSAGE_IDS) {
+    const oldestId = handledMessageIds.values().next().value;
+    if (oldestId) handledMessageIds.delete(oldestId);
+  }
 
   const raw = message.content.trim();
   if (!raw) return;
