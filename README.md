@@ -8,6 +8,7 @@ A standalone Discord bot powered by Discord.js, TypeScript, and the Groq API.
 - Can answer follow-up replies to its own messages
 - Keeps a short in-memory conversation history per user
 - Uses short, casual Gen Z / Gen Alpha style responses
+- Includes a `/lyrics query:` slash command that finds a song and links to its lyrics page on Genius
 - Includes two joke responses:
   - `can birds fly?` → `Yes, most birds can fly.`
   - `can fly birds?` → waits 10 seconds, then replies `🙏🥀gah dayum`
