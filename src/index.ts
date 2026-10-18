@@ -29,7 +29,7 @@ const client = new Client({
 
 const lyricsCommand = new SlashCommandBuilder()
   .setName('lyrics')
-  .setDescription('Find a song and open its lyrics page')
+  .setDescription('Search for a song and fetch lyrics when available')
   .addStringOption((option) =>
     option
       .setName('query')
@@ -75,15 +75,62 @@ async function handleLyricsCommand(interaction: ChatInputCommandInteraction): Pr
       return;
     }
 
-    const lyricsUrl = new URL('https://genius.com/search');
-    lyricsUrl.searchParams.set('q', `${track.trackName} ${track.artistName}`);
+    const lyricsUrl = new URL('https://en.wikisource.org/w/api.php');
+    lyricsUrl.searchParams.set('action', 'query');
+    lyricsUrl.searchParams.set('list', 'search');
+    lyricsUrl.searchParams.set('srsearch', `"${track.trackName}" lyrics`);
+    lyricsUrl.searchParams.set('format', 'json');
+    lyricsUrl.searchParams.set('srlimit', '1');
+    lyricsUrl.searchParams.set('origin', '*');
 
+    let lyricsText = '';
+    let lyricsPageUrl = '';
+    const wikiResponse = await fetch(lyricsUrl, {
+      headers: { 'User-Agent': 'JarvisDiscordBot/1.0 (lyrics lookup)' },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (wikiResponse.ok) {
+      const wikiData = await wikiResponse.json() as {
+        query?: { search?: Array<{ title?: string }> };
+      };
+      const pageTitle = wikiData.query?.search?.[0]?.title;
+      if (pageTitle) {
+        const extractUrl = new URL('https://en.wikisource.org/w/api.php');
+        extractUrl.searchParams.set('action', 'query');
+        extractUrl.searchParams.set('prop', 'extracts');
+        extractUrl.searchParams.set('explaintext', '1');
+        extractUrl.searchParams.set('exsectionformat', 'plain');
+        extractUrl.searchParams.set('titles', pageTitle);
+        extractUrl.searchParams.set('format', 'json');
+        const extractResponse = await fetch(extractUrl, {
+          headers: { 'User-Agent': 'JarvisDiscordBot/1.0 (lyrics lookup)' },
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (extractResponse.ok) {
+          const extractData = await extractResponse.json() as {
+            query?: { pages?: Record<string, { title?: string; extract?: string }> };
+          };
+          const page = Object.values(extractData.query?.pages ?? {})[0];
+          if (page?.extract?.trim()) {
+            lyricsText = page.extract.trim().slice(0, 3500);
+            lyricsPageUrl = `https://en.wikisource.org/wiki/${encodeURIComponent((page.title ?? pageTitle).replace(/ /g, '_'))}`;
+          }
+        }
+      }
+    }
+
+    const geniusUrl = new URL('https://genius.com/search');
+    geniusUrl.searchParams.set('q', `${track.trackName} ${track.artistName}`);
+
+    const description = `**Artist:** ${track.artistName}${track.collectionName ? `\n**Album:** ${track.collectionName}` : ''}`;
     const embed = new EmbedBuilder()
       .setColor(0x5865f2)
       .setTitle(track.trackName)
-      .setURL(lyricsUrl.toString())
-      .setDescription(`**Artist:** ${track.artistName}${track.collectionName ? `\n**Album:** ${track.collectionName}` : ''}\n\n[Open lyrics on Genius](${lyricsUrl.toString()})`)
-      .setFooter({ text: 'Jarvis • lyrics link' });
+      .setURL(lyricsPageUrl || geniusUrl.toString())
+      .setDescription(lyricsText
+        ? `${description}\n\n**Lyrics from Wikisource**\n${lyricsText}${lyricsText.length >= 3500 ? '…' : ''}\n\n[View source page](${lyricsPageUrl})`
+        : `${description}\n\nI couldn't find a lyrics text on Wikisource for this song. [Search Genius](${geniusUrl.toString()})`)
+      .setFooter({ text: lyricsText ? 'Jarvis • lyrics fetched from Wikisource' : 'Jarvis • lyrics search' });
 
     if (track.artworkUrl100) embed.setThumbnail(track.artworkUrl100);
     if (track.trackViewUrl) embed.addFields({ name: 'Listen', value: `[Open song on Apple Music](${track.trackViewUrl})` });
